@@ -1,14 +1,8 @@
 package com.udacity.vehicles.api;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.udacity.vehicles.client.maps.MapsClient;
@@ -86,6 +80,21 @@ public class CarControllerTest {
     }
 
     /**
+     * Tests for successful creation of new car in the system
+     * @throws Exception when car creation fails in the system
+     */
+    @Test
+    public void updateCar() throws Exception {
+        Car car = getModifiedCar();
+        mvc.perform(
+                put(new URI("/cars/1"))
+                    .content(json.write(car).getJson())
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk());
+    }
+
+    /**
      * Tests if the read operation appropriately returns a list of vehicles.
      * @throws Exception if the read operation of the vehicle list fails
      */
@@ -158,6 +167,30 @@ public class CarControllerTest {
         details.setModelYear(2018);
         details.setProductionYear(2018);
         details.setNumberOfDoors(4);
+        car.setDetails(details);
+        car.setCondition(Condition.USED);
+        return car;
+    }
+
+    /**
+     * Creates an example Car object for use in testing.
+     * @return an example Car object
+     */
+    private Car getModifiedCar() {
+        Car car = new Car();
+        car.setLocation(new Location(40.730610, -73.935242));
+        Details details = new Details();
+        Manufacturer manufacturer = new Manufacturer(102, "Ford");
+        details.setManufacturer(manufacturer);
+        details.setModel("Mustang");
+        details.setMileage(32280);
+        details.setExternalColor("blue");
+        details.setBody("sedan");
+        details.setEngine("5.0L V8");
+        details.setFuelType("Gasoline");
+        details.setModelYear(2012);
+        details.setProductionYear(2012);
+        details.setNumberOfDoors(2);
         car.setDetails(details);
         car.setCondition(Condition.USED);
         return car;
